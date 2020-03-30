@@ -23,7 +23,7 @@
                     filled
                     clearable
                     :error="!isLatVal"
-                    error-message="Wrong input"
+                    error-message="Latitude is not valid"
                     hint="Latitude Coordinate"
                   ></q-input>
                 </div>
@@ -36,7 +36,7 @@
                     filled
                     clearable
                     :error="!isLongVal"
-                    error-message="Wrong input"
+                    error-message="Longitude is not valid"
                     hint="Longitude Coordinate"
                   ></q-input>
                 </div>
@@ -79,14 +79,11 @@
                 <l-icon :icon-size="[32, 32]" :icon-url="icon" />
                 <l-popup :options="popupOptions">
                   <q-item class="row" style="font-size: 1rem">
-                    <q-item-section class="text-center" v-if="i !== editingIndex">{{m.details}}</q-item-section>
-                    <q-item-section v-else>
-                      <q-input ref="draft" v-model="draft" type="text" />
-                    </q-item-section>
+                    <q-item-section class="text-center">{{m.details}}</q-item-section>
                   </q-item>
                   <q-item>
                     <q-item-section>
-                      <div class="text-center" v-if="i !== editingIndex">
+                      <div class="text-center">
                         <q-btn
                           @click="dialogUpdate(m)"
                           size="md"
@@ -101,23 +98,6 @@
                           color="negative"
                           icon="delete"
                         />
-                      </div>
-                      <div class="text-center" v-else>
-                        <q-btn
-                          @click="update(m._id)"
-                          :disable="m.details === draft || draft === ''"
-                          size="md"
-                          flat
-                          color="primary"
-                          icon="save"
-                        ></q-btn>
-                        <q-btn
-                          @click="editingIndex = null"
-                          size="md"
-                          flat
-                          color="negative"
-                          icon="cancel"
-                        ></q-btn>
                       </div>
                     </q-item-section>
                   </q-item>
@@ -273,10 +253,8 @@ export default {
       isLatValid: true,
       isLongValid: true,
       popupOptions: {
-        // closeButton: false,
         minHeight: 100,
-        minWidth: 180,
-        className: "popupCustom"
+        minWidth: 180
       },
       editingIndex: null,
       draft: "",
@@ -317,16 +295,7 @@ export default {
           message: "Marker added"
         });
       }
-
-      this.details = "";
-      this.lat = "";
-      this.long = "";
       // console.log(this.lat + this.long + this.details);
-    },
-    edit(ii) {
-      this.editingIndex = ii;
-      this.draft = this.markers[ii].details;
-      setTimeout(() => this.$refs.draft[0].focus(), 0);
     },
 
     update() {
@@ -335,11 +304,12 @@ export default {
       if (this.isLatValid !== true || this.isLongValid !== true) {
         this.$q.notify({
           color: "negative",
-          message: "Wrong input"
+          message: "Coordinates is not valid"
         });
       } else {
         this.geomapSrvc.patch(this.marker._id, {
-          details: this.draftDetails
+          details: this.draftDetails,
+          coords: [this.draftLat, this.draftLng]
         });
         this.$q.notify({
           color: "positive",
@@ -352,6 +322,10 @@ export default {
     },
     deleteMarker() {
       this.geomapSrvc.remove(this.marker._id, {});
+      this.$q.notify({
+        color: "positive",
+        message: "Success"
+      });
     },
     dialogDelete(m) {
       this.marker = m;

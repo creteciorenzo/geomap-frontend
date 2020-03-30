@@ -5,5 +5,5 @@ export default async ({
   router,
   Vue
 }) => {
-  Vue.prototype.$dbCon = wings('http://localhost:3030')
+  Vue.prototype.$dbCon = wings('https://geomap-backend.herokuapp.com')
 }
