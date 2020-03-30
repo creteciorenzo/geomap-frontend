@@ -1,6 +1,6 @@
 # Quasar App (geomap)
 
-geomap frontend
+A real time geomap web application
 
 ## Install the dependencies
 ```bash
